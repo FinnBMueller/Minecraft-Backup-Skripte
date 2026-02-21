@@ -1,0 +1,63 @@
+#!/bin/bash
+set -e
+
+#################################
+# Konfiguration
+#################################
+
+MCUSER="ubuntu"
+MCPATH="/home/ubuntu/minecraft_server_fabric_1.21.10"
+BACKUPPATH="/home/ubuntu/minecraft_server_fabric_1.21.10/backups"
+LOCKFILE="/var/lock/minecraft-backup.lock"
+
+# Datum im Format: tag-monat-jahr__stunde-minute
+TIMESTAMP=$(date +"%d-%m-%Y__%H-%M")
+
+#################################
+# Lockfile (Race-Condition-Schutz)
+#################################
+
+if [ -f "$LOCKFILE" ]; then
+    echo "[Backup] ❌ Backup läuft bereits - Abbruch."
+    exit 1
+fi
+
+touch "$LOCKFILE"
+
+cleanup() {
+    rm -f "$LOCKFILE"
+}
+trap cleanup EXIT
+
+echo "[Backup] 🔒 Lock gesetzt"
+
+#################################
+# Minecraft Server sauber stoppen
+#################################
+
+echo "[Backup] 🛑 Minecraft wird heruntergefahren..."
+sudo -u "$MCUSER" bash "$MCPATH/shutdown.sh"
+
+# Warten, bis der Server wirklich aus ist
+sleep 5
+
+#################################
+# Backup erstellen
+#################################
+
+echo "[Backup] 📦 Erstelle Backup..."
+mkdir -p "$BACKUPPATH"
+cp -r "$MCPATH/world" "$BACKUPPATH/world__$TIMESTAMP"
+
+echo "[Backup] ✅ Backup abgeschlossen: world__$TIMESTAMP"
+
+#################################
+# Minecraft Server neu starten
+#################################
+
+echo "[Backup] ▶ Starte Minecraft Server..."
+
+sudo -u "$MCUSER" bash "$MCPATH/start.sh"
+
+echo "[Backup] 🟢 Fertig!"
+echo ""
