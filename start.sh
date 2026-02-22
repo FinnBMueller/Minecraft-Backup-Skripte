@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 #################################
@@ -12,7 +12,7 @@ LOCKFILE="/var/lock/minecraft-start.lock"
 #################################
 
 if [ -f "$LOCKFILE" ]; then
-    echo "[Backup] ❌ Backup läuft bereits - Abbruch."
+    echo "[Backup] ❌ Start läuft bereits - Abbruch."
     exit 1
 fi
 
@@ -23,15 +23,20 @@ cleanup() {
 }
 trap cleanup EXIT
 
-echo "[Backup] 🔒 Lock gesetzt"
+echo "[Backup] 🔒 Start Lock gesetzt"
 
 #################################
 # Minecraft Server aktion
 #################################
 
-# Minecraft in einer Screen-Session starten
-/usr/bin/screen -dmS minecraft java -Xmx20G -jar fabric-server-mc.1.21.10-loader.0.17.3-launcher.1.1.0.jar nogui
+echo ""
+/usr/bin/screen -ls
+echo ""
 
+# Minecraft in einer Screen-Session starten
+/usr/bin/screen -dmS minecraft /usr/bin/java -Xmx20G -jar fabric-server-mc.1.21.10-loader.0.17.3-launcher.1.1.0.jar nogui
+
+echo ""
 echo "Process starting"
 sleep 1
 echo "5"
@@ -47,4 +52,6 @@ echo ""
 echo " ---------------------------------" 
 echo "|>=-- server has been started --=<|" 
 echo " ---------------------------------" 
+echo ""
+/usr/bin/screen -ls
 echo ""
