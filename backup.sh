@@ -11,7 +11,7 @@ BACKUPPATH="/home/ubuntu/minecraft_server_fabric_1.21.10/backups"
 LOCKFILE="/var/lock/minecraft-backup.lock"
 
 # Datum im Format: tag-monat-jahr__stunde-minute
-TIMESTAMP=$(date +"%d-%m-%Y__%H-%M")
+TIMESTAMP=$(date +"%Y-%m-%d__%H-%M")
 
 #################################
 # Lockfile (Race-Condition-Schutz)
@@ -29,11 +29,11 @@ cleanup() {
 }
 trap cleanup EXIT
 
-echo "[Backup] 🔒 Lock gesetzt"
+echo "[Backup] 🔒 Backup Lock gesetzt"
 
-#################################
-# Minecraft Server sauber stoppen
-#################################
+#########################
+# Minecraft Server aktion
+#########################
 
 echo "[Backup] 🛑 Minecraft wird heruntergefahren..."
 sudo -u "$MCUSER" bash "$MCPATH/shutdown.sh"
@@ -46,8 +46,8 @@ sleep 5
 #################################
 
 echo "[Backup] 📦 Erstelle Backup..."
-mkdir -p "$BACKUPPATH"
-cp -r "$MCPATH/world" "$BACKUPPATH/world__$TIMESTAMP"
+sudo -u "$MCUSER" mkdir -p "$BACKUPPATH"
+sudo -u "$MCUSER" cp -r "$MCPATH/world" "$BACKUPPATH/world__$TIMESTAMP"
 
 echo "[Backup] ✅ Backup abgeschlossen: world__$TIMESTAMP"
 
@@ -60,4 +60,4 @@ echo "[Backup] ▶ Starte Minecraft Server..."
 sudo -u "$MCUSER" bash "$MCPATH/start.sh"
 
 echo "[Backup] 🟢 Fertig!"
-echo ""
+echo""
