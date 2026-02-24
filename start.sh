@@ -5,14 +5,15 @@ set -e
 # Konfiguration
 #################################
 
-LOCKFILE="/var/lock/minecraft-start.lock"
+BACKUPPATH="/home/ubuntu/minecraft_server_fabric_1.21.10/backups"
+LOCKFILE="$BACKUPPATH/.MC-Start.lock"
 
 #################################
 # Lockfile (Race-Condition-Schutz)
 #################################
 
 if [ -f "$LOCKFILE" ]; then
-    echo "[Backup] ❌ Start läuft bereits - Abbruch."
+    echo "[Start] ❌ Start läuft bereits - Abbruch."
     exit 1
 fi
 
@@ -20,18 +21,15 @@ touch "$LOCKFILE"
 
 cleanup() {
     rm -f "$LOCKFILE"
+    echo "[Start] 🔓 Start Lock entfernt"
 }
 trap cleanup EXIT
 
-echo "[Backup] 🔒 Start Lock gesetzt"
+echo "[Start] 🔒 Start Lock gesetzt"
 
 #################################
 # Minecraft Server aktion
 #################################
-
-echo ""
-/usr/bin/screen -ls
-echo ""
 
 # Minecraft in einer Screen-Session starten
 /usr/bin/screen -dmS minecraft /usr/bin/java -Xmx20G -jar fabric-server-mc.1.21.10-loader.0.17.3-launcher.1.1.0.jar nogui
