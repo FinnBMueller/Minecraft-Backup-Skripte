@@ -26,20 +26,30 @@ touch "$LOCKFILE"
 
 cleanup() {
     rm -f "$LOCKFILE"
+    echo "[Backup] 🔓 Backup Lock entfernt"
 }
 trap cleanup EXIT
 
 echo "[Backup] 🔒 Backup Lock gesetzt"
 
-#########################
-# Minecraft Server aktion
-#########################
+#################################
+# Minecraft Server Shutdown
+#################################
 
 echo "[Backup] 🛑 Minecraft wird heruntergefahren..."
 sudo -u "$MCUSER" bash "$MCPATH/shutdown.sh"
 
 # Warten, bis der Server wirklich aus ist
 sleep 5
+
+#################################
+# Backup Anzahl überprüfen
+#################################
+
+echo "[Backup] 🛑 Backup-Anzahl wird überprüft..."
+sudo -u "$MCUSER" bash "$MCPATH/backup-count.sh"
+
+echo "[Backup] ✅ Backup-Anzahl wurde überprüft"
 
 #################################
 # Backup erstellen
