@@ -5,14 +5,15 @@ set -e
 # Konfiguration
 #################################
 
-LOCKFILE="/var/lock/minecraft-shutdown.lock"
+BACKUPPATH="/home/ubuntu/minecraft_server_fabric_1.21.10/backups"
+LOCKFILE="$BACKUPPATH/.MC-Shutdown.lock"
 
 #################################
 # Lockfile (Race-Condition-Schutz)
 #################################
 
 if [ -f "$LOCKFILE" ]; then
-    echo "[Backup] ❌ Shutdown läuft bereits - Abbruch."
+    echo "[Shutdown] ❌ Shutdown läuft bereits - Abbruch."
     exit 1
 fi
 
@@ -20,18 +21,15 @@ touch "$LOCKFILE"
 
 cleanup() {
     rm -f "$LOCKFILE"
+    echo "[Shutdown] 🔓 Shutdown Lock entfernt"
 }
 trap cleanup EXIT
 
-echo "[Backup] 🔒 Shutdown Lock gesetzt"
+echo "[Shutdown] 🔒 Shutdown Lock gesetzt"
 
 #################################
 # Minecraft Server aktion
 #################################
-
-echo ""
-/usr/bin/screen -ls
-echo ""
 
 # give 10 minute warning
 /usr/bin/screen -S minecraft -X stuff "/say --------- SERVER-INFO ---------^M"
@@ -71,7 +69,7 @@ echo "Server shuts down in 9 seconds!"
 sleep 1
 # give 8 seconds warning
 /usr/bin/screen -S minecraft -X stuff "/say --------- SERVER-INFO ---------^M"
-/usr/bin/creen -S minecraft -X stuff "/say Server shuts down in 8 seconds!^M"
+/usr/bin/screen -S minecraft -X stuff "/say Server shuts down in 8 seconds!^M"
 echo "Server shuts down in 8 seconds!"
 sleep 1
 # give 7 seconds warning
@@ -137,7 +135,3 @@ echo ""
 if /usr/bin/screen -list | grep -q "minecraft"; then
     /usr/bin/screen -S minecraft -X quit
 fi
-
-echo ""
-/usr/bin/screen -ls
-echo ""
