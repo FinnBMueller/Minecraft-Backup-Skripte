@@ -36,11 +36,15 @@ echo "[Backup] 🔒 Backup Lock gesetzt"
 # Minecraft Server Shutdown
 #################################
 
-echo "[Backup] 🛑 Minecraft wird heruntergefahren..."
-sudo -u "$MCUSER" bash "$MCPATH/shutdown.sh"
+echo "[Backup] 🛑 Prüfe, ob ein Screen läuft..."
 
-# Warten, bis der Server wirklich aus ist
-sleep 5
+if sudo -u "$MCUSER" screen -ls | grep -q "[0-9]\+\."; then
+    echo "[Backup] 🛑 Screen gefunden - Minecraft wird heruntergefahren..."
+    sudo -u "$MCUSER" bash "$MCPATH/shutdown.sh"
+    sleep 5
+else
+    echo "[Backup] ⚠️ Kein laufender Screen gefunden - Shutdown wird übersprungen."
+fi
 
 #################################
 # Backup Anzahl überprüfen
