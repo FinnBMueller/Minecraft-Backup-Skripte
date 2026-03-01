@@ -40,7 +40,7 @@ echo "[Backup] 🛑 Prüfe, ob ein Screen läuft..."
 
 if sudo -u "$MCUSER" screen -ls | grep -q "[0-9]\+\."; then
     echo "[Backup] 🛑 Screen gefunden - Minecraft wird heruntergefahren..."
-    sudo -u "$MCUSER" bash "$MCPATH/shutdown.sh"
+    sudo -u "$MCUSER" bash "$MCPATH/shutdown-now.sh"
     sleep 5
 else
     echo "[Backup] ⚠️ Kein laufender Screen gefunden - Shutdown wird übersprungen."
@@ -71,6 +71,7 @@ echo "[Backup] ✅ Backup abgeschlossen: world__$TIMESTAMP"
 
 echo "[Backup] ▶ Starte Minecraft Server..."
 
+cd $MCPATH
 sudo -u "$MCUSER" bash "$MCPATH/start.sh"
 
 echo "[Backup] 🟢 Fertig!"
