@@ -47,9 +47,13 @@ echo "2"
 sleep 1
 echo "1"
 echo "" 
-echo " ---------------------------------" 
-echo "|>=-- server has been started --=<|" 
-echo " ---------------------------------" 
-echo ""
-/usr/bin/screen -ls
+if screen -ls | grep -q "[0-9]\+\."; then
+    echo " ---------------------------------" 
+    echo "|>=-- server has been started --=<|" 
+    echo " ---------------------------------" 
+    echo ""
+    /usr/bin/screen -ls
+else
+    echo "[Backup] ⚠️ Kein laufender Screen gefunden - Serverstart nicht bestätigt."
+fi
 echo ""
