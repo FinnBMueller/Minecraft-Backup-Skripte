@@ -1,5 +1,5 @@
 Für die reine Backup-Automatisierung werden die folgenden Skripte benötigt:
-- backuo-count.sh
+- backup-count.sh
 - backup.sh
 - shutdown.sh
 - start.sh
